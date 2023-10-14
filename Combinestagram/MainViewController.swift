@@ -121,6 +121,9 @@ class MainViewController: UIViewController {
     // подписываясь на нее есть гарантия получения одинаковых данных
     let newPhotos = controller.selectedPhotos.share()
     newPhotos
+      .filter { newImage in
+        return newImage.size.width > newImage.size.height
+      }
       .subscribe(
         onNext: { [weak self] image in
         guard let self else { return }
