@@ -18,7 +18,8 @@
 		9CE7E5E91DE5A40A00C8BA5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9CE7E5E71DE5A40A00C8BA5A /* LaunchScreen.storyboard */; };
 		9CE7E5F11DE5A94600C8BA5A /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 9CE7E5F01DE5A94600C8BA5A /* Podfile */; };
 		AA666CF2CFE55C01DB799680 /* Pods_Combinestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C0BFC97EB6CC9DCBDBD28F /* Pods_Combinestagram.framework */; };
-		F7F19B3F2ADA86A6004FE307 /* UIViewController+ Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F19B3E2ADA86A6004FE307 /* UIViewController+ Rx.swift */; };
+		F7F19B3F2ADA86A6004FE307 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F19B3E2ADA86A6004FE307 /* UIViewController+Rx.swift */; };
+		F7F19B422ADA9A36004FE307 /* PHPhotoLibrary+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F19B412ADA9A36004FE307 /* PHPhotoLibrary+Rx.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +38,8 @@
 		BA34C72C8DA48E78E4DA3904 /* Pods-Combinestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Combinestagram.release.xcconfig"; path = "Target Support Files/Pods-Combinestagram/Pods-Combinestagram.release.xcconfig"; sourceTree = "<group>"; };
 		BD2FEF0DDAC30D211E338D86 /* Pods-Combinestagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Combinestagram.debug.xcconfig"; path = "Target Support Files/Pods-Combinestagram/Pods-Combinestagram.debug.xcconfig"; sourceTree = "<group>"; };
 		D2C0BFC97EB6CC9DCBDBD28F /* Pods_Combinestagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Combinestagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7F19B3E2ADA86A6004FE307 /* UIViewController+ Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ Rx.swift"; sourceTree = "<group>"; };
+		F7F19B3E2ADA86A6004FE307 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
+		F7F19B412ADA9A36004FE307 /* PHPhotoLibrary+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHPhotoLibrary+Rx.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +113,7 @@
 				9CE7E5DE1DE5A40A00C8BA5A /* MainViewController.swift */,
 				9CDD7B051DE5BC660058B2D5 /* PhotosViewController.swift */,
 				9CDD7B071DE6D7ED0058B2D5 /* PhotoCell.swift */,
-				F7F19B3E2ADA86A6004FE307 /* UIViewController+ Rx.swift */,
+				F7F19B402ADA9A23004FE307 /* Extensions */,
 			);
 			path = Combinestagram;
 			sourceTree = "<group>";
@@ -122,6 +124,15 @@
 				D2C0BFC97EB6CC9DCBDBD28F /* Pods_Combinestagram.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F7F19B402ADA9A23004FE307 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F7F19B3E2ADA86A6004FE307 /* UIViewController+Rx.swift */,
+				F7F19B412ADA9A36004FE307 /* PHPhotoLibrary+Rx.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,9 +259,10 @@
 			files = (
 				9CDD7B041DE5AABE0058B2D5 /* UIImage+Collage.swift in Sources */,
 				9CDD7B081DE6D7ED0058B2D5 /* PhotoCell.swift in Sources */,
-				F7F19B3F2ADA86A6004FE307 /* UIViewController+ Rx.swift in Sources */,
+				F7F19B3F2ADA86A6004FE307 /* UIViewController+Rx.swift in Sources */,
 				9CDD7B061DE5BC660058B2D5 /* PhotosViewController.swift in Sources */,
 				9CDD7B0C1DE6E3D30058B2D5 /* PhotoWriter.swift in Sources */,
+				F7F19B422ADA9A36004FE307 /* PHPhotoLibrary+Rx.swift in Sources */,
 				9CE7E5DF1DE5A40A00C8BA5A /* MainViewController.swift in Sources */,
 				9CE7E5DD1DE5A40A00C8BA5A /* AppDelegate.swift in Sources */,
 			);

@@ -60,11 +60,37 @@ class PhotosViewController: UICollectionViewController {
   var selectedPhotos: Observable<UIImage> {
     return selectedPhotosSubject.asObservable()
   }
+  private let bag = DisposeBag()
 
   // MARK: View Controller
   override func viewDidLoad() {
     super.viewDidLoad()
-
+    
+    let authorized = PHPhotoLibrary.authorized.share()
+    authorized
+    // все false откидываются
+      .skipWhile { $0 == false }
+    // берем только один элемент
+      .take(1)
+      .subscribe { [weak self] _ in
+        self?.photos = PhotosViewController.loadPhotos()
+        DispatchQueue.main.async {
+          self?.collectionView.reloadData()
+        }
+      }
+      .disposed(by: bag)
+    authorized
+      .skip(1)
+      .takeLast(1)
+      .filter { $0 == false }
+      .subscribe { [weak self] _ in
+        // Не понял как это работает
+        guard let errorMessage = self?.errorMessage else {
+          return
+        }
+        DispatchQueue.main.async(execute: errorMessage)
+      }
+      .disposed(by: bag)
   }
 
   override func viewWillDisappear(_ animated: Bool) {
@@ -73,6 +99,19 @@ class PhotosViewController: UICollectionViewController {
     // Чтобы избежать этого нужно передать onCompleted в subject.
     // Тк он Publish, то после этого он будет уничтожен.
     selectedPhotosSubject.onCompleted()
+
+  }
+  
+  // MARK: - Private Methods
+  
+  private func errorMessage() {
+    alert(title: "No Access To Camera Roll!",
+          text: "You can grant access to Combinestagram from the Settings App")
+    .subscribe { [weak self] in
+      self?.dismiss(animated: true)
+      _ = self?.navigationController?.popViewController(animated: true)
+    }
+    .disposed(by: bag)
 
   }
 
@@ -112,7 +151,6 @@ class PhotosViewController: UICollectionViewController {
         // Берем только полный размер
         self?.selectedPhotosSubject.onNext(image)
       }
-//      self?.navigationController?.popViewController(animated: true)
     })
   }
 }
