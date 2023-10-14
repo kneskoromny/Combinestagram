@@ -50,6 +50,8 @@ class MainViewController: UIViewController {
     
     // Подписка для обновления картинки
     images
+    // Не пропускает события, идущие быстрее указанного интервала.
+      .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
       .subscribe { [weak imagePreview] photos in
         guard let imagePreview else { return }
         imagePreview.image = photos.collage(size: imagePreview.frame.size)
