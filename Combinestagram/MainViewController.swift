@@ -79,6 +79,16 @@ class MainViewController: UIViewController {
     title = photos.count > 0 ? "\(photos.count) photos" : "Collage"
   }
   
+  private func updateNavigationIcon() {
+    let icon = imagePreview.image?
+      .scaled(CGSize(width: 22, height: 22))
+      .withRenderingMode(.alwaysOriginal)
+    navigationItem.leftBarButtonItem = UIBarButtonItem(image: icon,
+                                                       style: .done,
+                                                       target: nil,
+                                                       action: nil)
+  }
+  
   // MARK: - Actions
   
   @IBAction func actionClear() {
@@ -106,7 +116,11 @@ class MainViewController: UIViewController {
   @IBAction func actionAdd() {
     let controller = storyboard?.instantiateViewController(withIdentifier: "PhotosViewController") as! PhotosViewController
     navigationController?.pushViewController(controller, animated: true)
-    controller.selectedPhotos
+    // .share создает подписку только для первого .subscribe
+    // для всех следующих эта подписка является той же самой
+    // подписываясь на нее есть гарантия получения одинаковых данных
+    let newPhotos = controller.selectedPhotos.share()
+    newPhotos
       .subscribe(
         onNext: { [weak self] image in
         guard let self else { return }
@@ -118,11 +132,12 @@ class MainViewController: UIViewController {
         print("Completed photo selection")
       })
       .disposed(by: bag)
-    /*
-     let newImages = images.value + [UIImage(named: "IMG_1907.jpg")!]
-     // после этого все подписчики получать уведомление
-     images.accept(newImages)
-     */
+    newPhotos
+      .ignoreElements()
+      .subscribe {
+        self.updateNavigationIcon()
+      }
+      .disposed(by: bag)
   }
   
 }
