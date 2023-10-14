@@ -123,6 +123,10 @@ class MainViewController: UIViewController {
     // подписываясь на нее есть гарантия получения одинаковых данных
     let newPhotos = controller.selectedPhotos.share()
     newPhotos
+      .takeWhile { [weak self] newImage in
+        let count = self?.images.value.count ?? 0
+        return count < 6
+      }
       .filter { newImage in
         return newImage.size.width > newImage.size.height
       }
