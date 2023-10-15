@@ -79,6 +79,7 @@ class PhotosViewController: UICollectionViewController {
         }
       }
       .disposed(by: bag)
+    /*
     authorized
       .skip(1)
       .takeLast(1)
@@ -91,6 +92,7 @@ class PhotosViewController: UICollectionViewController {
         DispatchQueue.main.async(execute: errorMessage)
       }
       .disposed(by: bag)
+     */
   }
 
   override func viewWillDisappear(_ animated: Bool) {

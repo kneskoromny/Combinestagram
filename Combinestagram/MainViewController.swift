@@ -48,8 +48,9 @@ class MainViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    let sharedImages = images.share()
     // Подписка для обновления картинки
-    images
+    sharedImages
     // Не пропускает события, идущие быстрее указанного интервала.
       .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
       .subscribe { [weak imagePreview] photos in
@@ -58,7 +59,7 @@ class MainViewController: UIViewController {
       }
       .disposed(by: bag)
     // Подписка для обновления остального UI
-    images
+    sharedImages
       .subscribe { [weak self] photos in
         self?.updateUI(photos: photos)
       }
@@ -92,12 +93,17 @@ class MainViewController: UIViewController {
                                                        action: nil)
   }
   
+  private func clearNavigationIcon() {
+    navigationItem.leftBarButtonItem = nil
+  }
+  
   // MARK: - Actions
   
   @IBAction func actionClear() {
     // новое событие onNext очищает массив
     images.accept([])
     imageCache.removeAll()
+    clearNavigationIcon()
   }
   
   @IBAction func actionSave() {
