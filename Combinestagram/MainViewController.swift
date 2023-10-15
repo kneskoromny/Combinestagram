@@ -43,19 +43,23 @@ class MainViewController: UIViewController {
   
   private let bag = DisposeBag()
   private let images = BehaviorRelay<[UIImage]>(value: [])
+  private var imageCache = [Int]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    let sharedImages = images.share()
     // Подписка для обновления картинки
-    images
+    sharedImages
+    // Не пропускает события, идущие быстрее указанного интервала.
+      .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
       .subscribe { [weak imagePreview] photos in
         guard let imagePreview else { return }
         imagePreview.image = photos.collage(size: imagePreview.frame.size)
       }
       .disposed(by: bag)
     // Подписка для обновления остального UI
-    images
+    sharedImages
       .subscribe { [weak self] photos in
         self?.updateUI(photos: photos)
       }
@@ -65,9 +69,9 @@ class MainViewController: UIViewController {
   // MARK: - Internal
   
   func showMessage(_ title: String, description: String? = nil) {
-    let alert = UIAlertController(title: title, message: description, preferredStyle: .alert)
-    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: { [weak self] _ in self?.dismiss(animated: true, completion: nil)}))
-    present(alert, animated: true, completion: nil)
+    alert(title: title, text: description)
+      .subscribe()
+      .disposed(by: bag)
   }
   
   // MARK: - Private
@@ -79,11 +83,27 @@ class MainViewController: UIViewController {
     title = photos.count > 0 ? "\(photos.count) photos" : "Collage"
   }
   
+  private func updateNavigationIcon() {
+    let icon = imagePreview.image?
+      .scaled(CGSize(width: 22, height: 22))
+      .withRenderingMode(.alwaysOriginal)
+    navigationItem.leftBarButtonItem = UIBarButtonItem(image: icon,
+                                                       style: .done,
+                                                       target: nil,
+                                                       action: nil)
+  }
+  
+  private func clearNavigationIcon() {
+    navigationItem.leftBarButtonItem = nil
+  }
+  
   // MARK: - Actions
   
   @IBAction func actionClear() {
     // новое событие onNext очищает массив
     images.accept([])
+    imageCache.removeAll()
+    clearNavigationIcon()
   }
   
   @IBAction func actionSave() {
@@ -106,7 +126,26 @@ class MainViewController: UIViewController {
   @IBAction func actionAdd() {
     let controller = storyboard?.instantiateViewController(withIdentifier: "PhotosViewController") as! PhotosViewController
     navigationController?.pushViewController(controller, animated: true)
-    controller.selectedPhotos
+    // .share создает подписку только для первого .subscribe
+    // для всех следующих эта подписка является той же самой
+    // подписываясь на нее есть гарантия получения одинаковых данных
+    let newPhotos = controller.selectedPhotos.share()
+    newPhotos
+      .takeWhile { [weak self] newImage in
+        let count = self?.images.value.count ?? 0
+        return count < 6
+      }
+      .filter { newImage in
+        return newImage.size.width > newImage.size.height
+      }
+      .filter { [weak self] newImage in
+        let len = newImage.pngData()?.count ?? 0
+        guard self?.imageCache.contains(len) == false else {
+          return false
+        }
+        self?.imageCache.append(len)
+        return true
+      }
       .subscribe(
         onNext: { [weak self] image in
         guard let self else { return }
@@ -118,11 +157,12 @@ class MainViewController: UIViewController {
         print("Completed photo selection")
       })
       .disposed(by: bag)
-    /*
-     let newImages = images.value + [UIImage(named: "IMG_1907.jpg")!]
-     // после этого все подписчики получать уведомление
-     images.accept(newImages)
-     */
+    newPhotos
+      .ignoreElements()
+      .subscribe {
+        self.updateNavigationIcon()
+      }
+      .disposed(by: bag)
   }
   
 }
